@@ -1,0 +1,26 @@
+.coverer{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.coverer h3{
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 0;
+    text-align: left;
+}
+
+.adderspan{
+    height: 20.38px;
+    padding: 0px;
+    width: 30px;
+}
+
+.addera{
+    text-decoration: none;
+    font-size: 17px;
+    padding: 0px;
+    height: 20.38px;
+}
