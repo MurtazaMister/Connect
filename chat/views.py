@@ -89,3 +89,22 @@ def create(request, type):
         new_room.users.add(request.user)
         new_room.save()
         return redirect('/connect/private/'+new_room.name)
+
+def search(request):
+    q = request.GET.get('query')
+    payload = set()
+    if q:
+        users = User.objects.filter(username__icontains=q)
+        for user in users:
+            payload.add(user.username + " (" + user.first_name + " " + user.last_name + ")")
+        users = User.objects.filter(first_name__icontains=q)
+        for user in users:
+            payload.add(user.username + " (" + user.first_name + " " + user.last_name + ")")
+        users = User.objects.filter(last_name__icontains = q)
+        for user in users:
+            payload.add(user.username + " (" + user.first_name + " " + user.last_name + ")")
+        payload.add('admin (Admin )')
+        payload.add(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
+        payload.remove('admin (Admin )')
+        payload.remove(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
+    return JsonResponse({'data':list(payload)})
