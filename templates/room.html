@@ -17,7 +17,7 @@
         setInterval(function(){
             $.ajax({
                 type:'GET',
-                url:'/getMessages/{{roomname}}',
+                url:'/getMessages/{{type}}/{{roomname}}',
                 success: function(response){
                     $('#chat').empty();
                     for(var key in response.messages){
@@ -33,8 +33,6 @@
                         }
                         $('#chat').append(temp);
                     }
-                    let d = $('#chat');
-                    d.scrollTop(d.prop("scrollHeight"));
                 }
             })
         },1000)
@@ -54,7 +52,6 @@
                         <span class="textarea inputbox" id="inputbox" role="textbox" contenteditable>Enter your message...</span>
                         <hr class="invis">
                         <button type="submit"><img src="/static/send/send.png" alt="Send" style="height:20px;width:20px"></button>
-                        {% comment %} <input type="submit" value="Send"> {% endcomment %}
                     </form>
                 </div>
 			</div>
@@ -67,16 +64,20 @@
 		</div>
 	</section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    {% comment %} <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script> {% endcomment %}
 </body>
 <script>
+    $(document).ready(()=>{
+        let d = $('#chat');
+        setTimeout(()=>{d.scrollTop(d.prop("scrollHeight"));},2000)
+    })
     user = "{{request.user}}"
     room = "{{roomname}}"
+    roomtype = "{{type}}"
     $(document).on('submit','#postform',function(e){
         e.preventDefault();
         $.ajax({
             type:'POST',
-            url:'/send',
+            url:'/send/'+roomtype,
             data:{
                 user: user,
                 room: room,
@@ -86,6 +87,8 @@
             success: function(data){
                 {% comment %} alert(data); {% endcomment %}
                 $('#inputbox').html("Enter your message...")
+                let d = $('#chat');
+                setTimeout(()=>{d.scrollTop(d.prop("scrollHeight"));},500)
             }
         });
     });

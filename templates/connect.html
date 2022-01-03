@@ -51,6 +51,36 @@
 							</div>
                     </div>
 				</div>
+				<div class="container-fluid coverer">
+                    <h3>Private rooms</h3>
+                    <div class="piller">
+                        {% for pr in privaterooms %}
+                            <a href="/connect/private/{{pr.name}}"><span class="badge rounded-pill bg-dark">{{pr.name}}</span></a>
+                        {% endfor %}
+						<a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal2"><span class="adderspan badge rounded-pill bg-dark">+</span></a>
+						<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModal2Label" aria-hidden="true">
+							<form action="/create/private" method="POST">
+								{% csrf_token %}
+								<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+									<h5 class="modal-title" id="exampleModal2Label">Create private room</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+									<h6 style="display:inline;">Enter room name : </h6>
+									<input type="text" name="proom">
+									</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									<button type="submit" class="btn btn-primary">Create room</button>
+									</div>
+								</div>
+								</div>
+							</form>
+							</div>
+                    </div>
+				</div>
 			</div>
 			<div class="right">
 				<div class="right-text">

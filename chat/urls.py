@@ -9,7 +9,8 @@ urlpatterns = [
     path('signup',views.signup,name="signup"),
     path('connect',views.connect,name="connect"),
     path('connect/global/<str:room>',views.globalRoom,name="globalRoom"),
-    path('send',views.send,name="send"),
-    path('getMessages/<str:room>',views.getMessages,name="getMessages"),
+    path('connect/private/<str:room>',views.privateRoom,name="privateRoom"),
+    path('send/<str:type>',views.send,name="send"),
+    path('getMessages/<str:type>/<str:room>',views.getMessages,name="getMessages"),
     path('create/<str:type>',views.create,name="create"),
 ]
