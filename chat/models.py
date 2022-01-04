@@ -22,6 +22,7 @@ class GlobalMessage(models.Model):
 class PrivateRoom(models.Model):
     name = models.CharField(max_length=100)
     users = models.ManyToManyField(User)
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name="grp_admin", default=1)
 
     def __str__(self):
         return self.name

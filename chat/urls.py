@@ -14,4 +14,5 @@ urlpatterns = [
     path('getMessages/<str:type>/<str:room>',views.getMessages,name="getMessages"),
     path('create/<str:type>',views.create,name="create"),
     path('search/',views.search,name="search"),
+    path('addmembers/<str:room>',views.addmembers,name="addmembers"),
 ]

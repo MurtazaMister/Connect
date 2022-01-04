@@ -39,12 +39,20 @@
 .invis{
     margin:0;
 }
+
 .bottom button{
     position: absolute;
     border: 0;
     outline:none;
     background-color: inherit;
     right: 10px;
+    bottom: 10px;
+}
+
+.bottom .addera{
+    position: absolute;
+    background-color: inherit;
+    left: 10px;
     bottom: 10px;
 }
 
@@ -78,4 +86,10 @@
     margin-bottom: -10px;
     font-size: 11px;
     color: gray;
+}
+
+.displayer{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
 }

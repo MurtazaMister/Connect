@@ -29,7 +29,7 @@
                         {% endfor %}
 						<a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal"><span class="adderspan badge rounded-pill bg-dark">+</span></a>
 						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								<form action="/create/global" method="POST">
+							<form action="/create/global" method="POST">
 								{% csrf_token %}
 								<div class="modal-dialog">
 								<div class="modal-content">
@@ -48,7 +48,7 @@
 								</div>
 								</div>
 							</form>
-							</div>
+						</div>
                     </div>
 				</div>
 				<div class="container-fluid coverer">

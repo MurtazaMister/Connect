@@ -2,7 +2,7 @@ from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import GlobalRoom, GlobalMessage, PrivateMessage, PrivateRoom
+from chat.models import GlobalRoom, GlobalMessage, PrivateMessage, PrivateRoom
 
 # Create your views here.
 def home(request):
@@ -52,9 +52,15 @@ def globalRoom(request,room):
     })
 
 def privateRoom(request,room):
+    pvtRoom = PrivateRoom.objects.get(name=room)
+    pvtUsers = ""
+    for k in pvtRoom.users.all():
+        pvtUsers = pvtUsers + "," + k.username
     return render(request,'room.html',{
         'type':'Private',
         'roomname':room,
+        'pvtRoom':pvtRoom,
+        'pvtUsers':pvtUsers,
     })
 
 def send(request, type):
@@ -84,7 +90,7 @@ def create(request, type):
         new_room.save()
         return redirect('/connect/global/'+new_room.name)
     elif type=="private":
-        new_room = PrivateRoom.objects.create(name=request.POST["proom"])
+        new_room = PrivateRoom.objects.create(name=request.POST["proom"],admin=request.user)
         new_room.save()
         new_room.users.add(request.user)
         new_room.save()
@@ -108,3 +114,19 @@ def search(request):
         payload.remove('admin (Admin )')
         payload.remove(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
     return JsonResponse({'data':list(payload)})
+
+def addmembers(request,room):
+    z = request.POST['value']
+    z = z[1:-1]
+    if z:
+        z = z.split(',')
+        for k in z:
+            k = k[1:k.find('(')-1]
+            user = User.objects.get(username=k)
+            pvt = PrivateRoom.objects.get(name=room)
+            pvt.users.add(user)
+    pvtRoom = PrivateRoom.objects.get(name=room)
+    pvtUsers = ""
+    for k in pvtRoom.users.all():
+        pvtUsers = pvtUsers + "," + k.username
+    return HttpResponse(pvtUsers)

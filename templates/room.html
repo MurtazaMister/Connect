@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,89 +9,252 @@
     <link rel="stylesheet" href="/static/login/login.css">
     <link rel="stylesheet" href="/static/connect/connect.css">
     <link rel="stylesheet" href="/static/room/room.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> {% endcomment %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% comment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> {% endcomment %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css" />
     <script>
-        setInterval(function(){
+        setInterval(function () {
             $.ajax({
-                type:'GET',
-                url:'/getMessages/{{type}}/{{roomname}}',
-                success: function(response){
+                type: 'GET',
+                url: '/getMessages/{{type}}/{{roomname}}',
+                success: function (response) {
                     $('#chat').empty();
-                    for(var key in response.messages){
+                    for (var key in response.messages) {
                         let temp;
                         let tym = response.messages[key].time;
-                        time = tym.slice(0,10).split('-') // This is date
-                        date = tym.slice(11,19) // This is time
-                        if(response.messages[key]['user_id']==`{{request.user.id}}`){
+                        time = tym.slice(0, 10).split('-') // This is date
+                        date = tym.slice(11, 19) // This is time
+                        if (response.messages[key]['user_id'] == `{{request.user.id}}`) {
                             temp = `<span class="msg r text-end"> <b class="d-block mb-1">You</b> ${response.messages[key].value} <span class="datetime text-start">${date} ${time[2]}-${time[1]}-${time[0]}</span></span>`
                         }
-                        else{
+                        else {
                             temp = `<span class="msg text-start"> <b class="d-block mb-1">${response.messages[key].user_name}</b> ${response.messages[key].value} <span class="datetime text-end">${date} ${time[2]}-${time[1]}-${time[0]}</span> </span>`
                         }
                         $('#chat').append(temp);
                     }
                 }
             })
-        },1000)
+        }, 1000)
     </script>
 </head>
+
 <body>
-	<section class="login">
-		<div class="login_box">
-			<div class="left">
+    <section class="login">
+        <div class="login_box">
+            <div class="left">
                 <div class="head">
                     <h2>{{roomname}}</h2>
+                    <div class="row" style="margin-bottom:10px; width:100%;">
+                    {% if type == "Private" %}
+                    <div class="col"><h6 style="margin-bottom: 15px; display:inline;">Group host : {{pvtRoom.admin}}</h6></div>
+                    <div class="col" style="display:flex; justify-content:flex-end;"><a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal2"><span class="adderspan badge rounded-pill bg-dark" style="width:110px;font-weight: 500;">View members</span></a></div>
+
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModal2Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModal2Label">View members</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="displayer">
+                                    
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            {% comment %} <button type="button" class="btn btn-primary">Save changes</button> {% endcomment %}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    </div>
                     <button onclick="resetter()">&#8635;</button>
                 </div>
                 <div class="bottom">
                     <form id="postform">
                         {% csrf_token %}
-                        <span class="textarea inputbox" id="inputbox" role="textbox" onkeyup="checkKey(event)" contenteditable>Enter your message...</span>
+                        <span class="textarea inputbox" id="inputbox" role="textbox" onkeyup="checkKey(event)"
+                            contenteditable>Enter your message...</span>
                         <hr class="invis">
                         <button id="sub" type="submit"><img src="/static/send/send.png" alt="Send" style="height:20px;width:20px"></button>
                     </form>
+                    {% if type == "Private" %}
+                        <a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal"><span
+                                class="adderspan badge rounded-pill bg-dark" style="width:100px;font-weight: 500;">Add members</span></a>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <form id="user_adder">
+                                {% csrf_token %}
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Add Users</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-3" style="display:flex;align-items:center;">
+                                                    <h6 style="display:inline;">Search users : </h6>
+                                                </div>
+                                                <div class="col">
+                                                    <div id="autocomplete" class="autocomplete" style="display:inline;">
+                                                        <input class="autocomplete-input" />
+                                                        <ul class="autocomplete-result-list"></ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-group" id="user-list" style="margin-top:14px;">
+                                                {% comment %}
+                                                <li class="list-group-item">
+                                                    <input style="position:static;margin-left: 0px;"
+                                                        class="form-check-input me-2" type="checkbox" value=""
+                                                        aria-label="..." checked onchange="gc(event)">
+                                                    First checkbox
+                                                </li>
+                                                {% endcomment %}
+                                            </ul>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="closeModal" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" id="add_member" class="btn btn-primary">Add users</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
                 </div>
-			</div>
-			<div class="right">
-                <div class="box" id="chat">
-                    {% comment %} <span class="msg text-start"> <b class="d-block mb-1">User1</b> This is an enormous message typed by murtaza akil msiter will this work out?????????????This is an enormous message typed by murtaza akil msiter will this work out?????????????This is an enormous message typed by murtaza aork out?????????????? <span class="datetime text-end">11:04PM 02/01/2022</span> </span> {% endcomment %}
-                    {% comment %} <span class="msg r text-end"> <b class="d-block mb-1">You</b> This is an enormous message typed by murtaza akil msiter will this work out?????????????This is an enormous message typed by murtaza akil msiter will this work out?????????????This is an enormous message typed by murtaza aork out??????????????<span class="datetime text-start">11:04PM 02/01/2022</span></span> {% endcomment %}
-                </div>
-			</div>
-		</div>
-	</section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+            </div>
+            <div class="right">
+                <div class="box" id="chat"></div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
 </body>
 <script>
-    $(document).ready(()=>{
+    $(document).ready(() => {
         let d = $('#chat');
-        setTimeout(()=>{d.scrollTop(d.prop("scrollHeight"));},2000)
+        setTimeout(() => { d.scrollTop(d.prop("scrollHeight")); }, 2000)
     })
     user = "{{request.user}}"
     room = "{{roomname}}"
     roomtype = "{{type}}"
-    $(document).on('submit','#postform',function(e){
+    admin = "{{pvtRoom.admin}}"
+    $(document).on('submit', '#postform', function (e) {
         e.preventDefault();
         $.ajax({
-            type:'POST',
-            url:'/send/'+roomtype,
-            data:{
+            type: 'POST',
+            url: '/send/' + roomtype,
+            data: {
                 user: user,
                 room: room,
                 value: $('#inputbox').text(),
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },
-            success: function(data){
+            success: function (data) {
                 {% comment %} alert(data); {% endcomment %}
                 $('#inputbox').html("Enter your message...")
                 let d = $('#chat');
-                setTimeout(()=>{d.scrollTop(d.prop("scrollHeight"));},500)
+                setTimeout(() => { d.scrollTop(d.prop("scrollHeight")); }, 500)
             }
         });
     });
+
+    {% if type == "Private" %}
+    new Autocomplete('#autocomplete', {
+        search: (input) => {
+            const url = `/search/?query=${input}`
+            return new Promise(resolve => {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        resolve(data.data)
+                    })
+            })
+        },
+        onSubmit: result => {
+            {% comment %} console.log(result) {% endcomment %}
+            $('.autocomplete-input').val('')
+            $('#user-list').append(`
+                <li class="list-group-item">
+                <input style="position:static;margin-left: 0px;" class="form-check-input me-2" type="checkbox" value="" aria-label="..." checked onchange="gc(event)">
+                ${result}
+                </li>
+            `)
+        }
+    })
+    
+
+    $(document).on('submit', '#user_adder', function (e) {
+        let z = []
+        for(let i = 0;i<$('#user-list').children().length;i++){
+            z.push($('#user-list').children()[i].textContent.trim())
+        }
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/addmembers/' + room,
+            data: {
+                user: user,
+                room: room,
+                value: JSON.stringify(z),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                $('#user-list').empty()
+                $('#closeModal').click()
+                $('.displayer').empty()
+                members = data.split(',')
+                members.sort()
+                for(let i = 1;i<members.length;i++){
+                    if(members[i]==admin){
+                        $('.displayer').append(`<b><span>${members[i]}</span></b>`)
+                        continue;
+                    }
+                    else if(members[i]==user){
+                        $('.displayer').append(`<span><u>${members[i]}</u></span>`)
+                        continue;
+                    }
+                    $('.displayer').append(`<span>${members[i]}</span>`)
+                }
+            }
+        });
+    });
+
+
+    members = "{{pvtUsers}}"
+    members = members.split(',')
+    members.sort()
+    for(let i = 1;i<members.length;i++){
+        if(members[i]==admin){
+            $('.displayer').append(`<b><span>${members[i]}</span></b>`)
+            continue;
+        }
+        else if(members[i]==user){
+            $('.displayer').append(`<span><u>${members[i]}</u></span>`)
+            continue;
+        }
+        $('.displayer').append(`<span>${members[i]}</span>`)
+    }
+
+
+    {% endif %}
 </script>
 <script src="/static/room/room.js"></script>
+
 </html>
