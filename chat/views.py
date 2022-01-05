@@ -1,4 +1,4 @@
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -41,10 +41,12 @@ def connect(request):
     # user = authenticate(username='john', password='secret')
     # if user is not None:
     globalrooms = GlobalRoom.objects.all()
-    privaterooms = request.user.privateroom_set.all()
+    privaterooms = request.user.privateroom_set.filter(type="GROUP")
+    indivrooms = request.user.privateroom_set.filter(type="INDIV")
     return render(request,'connect.html',{
         'globalrooms':globalrooms,
         'privaterooms':privaterooms,
+        'indivrooms':indivrooms,
     })
 
 def globalRoom(request,room):
@@ -121,7 +123,6 @@ def search(request):
     payload.add(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
     payload.remove('admin (Admin )')
     payload.remove(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
-    print("this is payload",payload)
     return JsonResponse({'data':list(payload)})
 
 def addmembers(request,room):
@@ -154,3 +155,27 @@ def removemembers(request,room):
     for k in pvtRoom.users.all():
         pvtUsers = pvtUsers + "," + k.username
     return HttpResponse(pvtUsers)
+
+def privateIndivRoom(request, indiv):
+    type = "INDIV"
+    if PrivateRoom.objects.filter(name=indiv).exists():
+        pvtRoom = PrivateRoom.objects.get(name=indiv)
+        return render(request,'room.html',{
+        'type':'Private',
+        'roomname':indiv,
+        'pvtRoom':pvtRoom,
+        })
+    else:
+        name = ''
+        if indiv.split('_')[0]<indiv.split('_')[1]:
+            name = indiv.split('_')[0]+'_'+indiv.split('_')[1]
+        else:
+            name = indiv.split('_')[1]+'_'+indiv.split('_')[0]
+        newRoom = PrivateRoom.objects.create(name=name,type="INDIV")
+        newRoom.users.add(User.objects.get(username=indiv.split('_')[0]),User.objects.get(username=indiv.split('_')[1]))
+        newRoom.save()
+        return render(request,'room.html',{
+            'type':'Private',
+            'roomname':indiv,
+            'pvtRoom':newRoom,
+        })
