@@ -38,6 +38,8 @@ def signup(request):
     return render(request,"signup.html")
 
 def connect(request):
+    # user = authenticate(username='john', password='secret')
+    # if user is not None:
     globalrooms = GlobalRoom.objects.all()
     privaterooms = request.user.privateroom_set.all()
     return render(request,'connect.html',{
@@ -109,10 +111,17 @@ def search(request):
         users = User.objects.filter(last_name__icontains = q)
         for user in users:
             payload.add(user.username + " (" + user.first_name + " " + user.last_name + ")")
-        payload.add('admin (Admin )')
-        payload.add(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
-        payload.remove('admin (Admin )')
-        payload.remove(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
+    else:
+        u = User.objects.all()
+        payMax = len(u)
+        for i in range(payMax):
+            payload.add(u[i].username + " (" + u[i].first_name + " " + u[i].last_name + ")")
+
+    payload.add('admin (Admin )')
+    payload.add(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
+    payload.remove('admin (Admin )')
+    payload.remove(request.user.username + " (" + request.user.first_name + " " + request.user.last_name + ")")
+    print("this is payload",payload)
     return JsonResponse({'data':list(payload)})
 
 def addmembers(request,room):
@@ -125,6 +134,21 @@ def addmembers(request,room):
             user = User.objects.get(username=k)
             pvt = PrivateRoom.objects.get(name=room)
             pvt.users.add(user)
+    pvtRoom = PrivateRoom.objects.get(name=room)
+    pvtUsers = ""
+    for k in pvtRoom.users.all():
+        pvtUsers = pvtUsers + "," + k.username
+    return HttpResponse(pvtUsers)
+
+def removemembers(request,room):
+    z = request.POST['value']
+    z = z[1:-1]
+    if z:
+        z = z.split(',')
+        for k in z:
+            pvt = PrivateRoom.objects.get(name=room)
+            user = User.objects.get(username=k[1:-1])
+            pvt.users.remove(user.id)
     pvtRoom = PrivateRoom.objects.get(name=room)
     pvtUsers = ""
     for k in pvtRoom.users.all():

@@ -17,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> {% endcomment %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+    <script src="/static/room/room.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css" />
     <script>
         setInterval(function () {
@@ -48,6 +49,7 @@
     <section class="login">
         <div class="login_box">
             <div class="left">
+                <div class="top_link"><a href="/connect"><img src="https://drive.google.com/u/0/uc?id=16U__U5dJdaTfNGobB_OpwAJ73vM50rPV&export=download" alt="">Connect</a></div>
                 <div class="head">
                     <h2>{{roomname}}</h2>
                     <div class="row" style="margin-bottom:10px; width:100%;">
@@ -88,8 +90,10 @@
                     </form>
                     {% if type == "Private" %}
                         <a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal"><span
-                                class="adderspan badge rounded-pill bg-dark" style="width:100px;font-weight: 500;">Add members</span></a>
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
+                                Add members
+                                </span></a>
+                        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">
                             <form id="user_adder">
                                 {% csrf_token %}
@@ -127,13 +131,48 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" id="closeModal" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Close</button>
+                                                data-bs-dismiss="modal" onclick="clear1()">Close</button>
                                             <button type="submit" id="add_member" class="btn btn-primary">Add users</button>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
+                        
+                        {% if request.user == pvtRoom.admin %}
+                        <a type="button" class="removera" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                            <span class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
+                                Remove members
+                            </span></a>
+                        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal3Label"
+                            aria-hidden="true">
+                            <form id="user_remover">
+                                {% csrf_token %}
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModal3Label">Remove Users</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="listt" id="display-to-be-removed">
+
+                                            </div>
+                                            <ul class="list-group" id="remove-user-list" style="margin-top:14px;">
+                                                
+                                            </ul>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="closeModal3" class="btn btn-secondary"
+                                                data-bs-dismiss="modal" onclick="clear1()">Close</button>
+                                            <button type="submit" id="remove_member" class="btn btn-primary">Remove users</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
                         {% endif %}
                 </div>
             </div>
@@ -181,14 +220,13 @@
             const url = `/search/?query=${input}`
             return new Promise(resolve => {
                 fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        resolve(data.data)
-                    })
+                .then(response => response.json())
+                .then(data => {
+                    resolve(data.data)
+                })
             })
         },
         onSubmit: result => {
-            {% comment %} console.log(result) {% endcomment %}
             $('.autocomplete-input').val('')
             $('#user-list').append(`
                 <li class="list-group-item">
@@ -216,7 +254,7 @@
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                $('#user-list').empty()
+                $('#display-to-be-removed').empty()
                 $('#closeModal').click()
                 $('.displayer').empty()
                 members = data.split(',')
@@ -230,6 +268,44 @@
                         $('.displayer').append(`<span><u>${members[i]}</u></span>`)
                         continue;
                     }
+                    $('#display-to-be-removed').append(`<button type="button" class="adderspan badge rounded-pill bg-dark" style="padding-bottom:18px;width:fit-content;font-weight: 500;" onclick="remAdder(event)">${members[i]}</button>`)
+                    $('.displayer').append(`<span>${members[i]}</span>`)
+                }
+            }
+        });
+    });
+    
+    $(document).on('submit', '#user_remover', function (e) {
+        let z = []
+        for(let i = 0;i<$('#remove-user-list').children().length;i++){
+            z.push($('#remove-user-list').children()[i].textContent.trim())
+        }
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/removemembers/' + room,
+            data: {
+                user: user,
+                room: room,
+                value: JSON.stringify(z),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                $('#display-to-be-removed').empty()
+                $('#closeModal3').click()
+                $('.displayer').empty()
+                members = data.split(',')
+                members.sort()
+                for(let i = 1;i<members.length;i++){
+                    if(members[i]==admin){
+                        $('.displayer').append(`<b><span>${members[i]}</span></b>`)
+                        continue;
+                    }
+                    else if(members[i]==user){
+                        $('.displayer').append(`<span><u>${members[i]}</u></span>`)
+                        continue;
+                    }
+                    $('#display-to-be-removed').append(`<button type="button" class="adderspan badge rounded-pill bg-dark" style="padding-bottom:18px;width:fit-content;font-weight: 500;" onclick="remAdder(event)">${members[i]}</button>`)
                     $('.displayer').append(`<span>${members[i]}</span>`)
                 }
             }
@@ -249,12 +325,12 @@
             $('.displayer').append(`<span><u>${members[i]}</u></span>`)
             continue;
         }
+        $('#display-to-be-removed').append(`<button type="button" class="adderspan badge rounded-pill bg-dark" style="padding-bottom:18px;width:fit-content;font-weight: 500;" onclick="remAdder(event)">${members[i]}</button>`)
         $('.displayer').append(`<span>${members[i]}</span>`)
     }
 
 
     {% endif %}
 </script>
-<script src="/static/room/room.js"></script>
 
 </html>

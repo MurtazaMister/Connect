@@ -15,4 +15,5 @@ urlpatterns = [
     path('create/<str:type>',views.create,name="create"),
     path('search/',views.search,name="search"),
     path('addmembers/<str:room>',views.addmembers,name="addmembers"),
+    path('removemembers/<str:room>',views.removemembers,name="removemembers"),
 ]

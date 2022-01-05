@@ -24,7 +24,7 @@
     width: 100%;
 }
 .bottom{
-    height: 90%;
+    height: 75%;
     overflow: auto;
 }
 .inputbox:focus{
@@ -54,6 +54,15 @@
     background-color: inherit;
     left: 10px;
     bottom: 10px;
+}
+
+.bottom .removera{
+    background-color: inherit;
+    position: absolute;
+    left: 115px;
+    height: 20.38px;
+    bottom: 10px;
+    font-size: 17px;
 }
 
 .right .box{
@@ -92,4 +101,18 @@
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3,1fr);
+}
+
+.top_link{
+    margin-bottom: 10px;
+}
+
+#user-list{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+
+#remove-user-list{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
 }
