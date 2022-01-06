@@ -70,6 +70,13 @@
 									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
+									{% if messages %}
+									<div style="margin-bottom:10px;">
+										{% for message in messages %}
+										<span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+										{% endfor %}
+									</div>
+									{% endif %}
 									<h6 style="display:inline;">Enter room name : </h6>
 									<input type="text" name="proom">
 									</div>
@@ -100,7 +107,7 @@
 								<div class="modal-dialog">
 								<div class="modal-content">
 									<div class="modal-header">
-									<h5 class="modal-title" id="exampleModal3Label">Create private room</h5>
+									<h5 class="modal-title" id="exampleModal3Label">Connect to</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">

@@ -133,5 +133,8 @@ img{
     margin-top: -3px;
 }
 
-
-
+.error{
+    color:red;
+    padding:0;
+    font-weight:500;
+}

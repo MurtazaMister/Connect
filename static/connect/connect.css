@@ -24,3 +24,8 @@
     padding: 0px;
     height: 20.38px;
 }
+
+.error{
+    font-weight: 500;
+    color: red;
+}

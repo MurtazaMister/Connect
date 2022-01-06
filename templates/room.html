@@ -49,43 +49,60 @@
     <section class="login">
         <div class="login_box">
             <div class="left">
-                <div class="top_link"><a href="/connect"><img src="/static/logo/left.svg" alt="Go back">Connect</a></div>
+                <div class="top_link"><a href="/connect"><img src="/static/logo/left.svg" alt="Go back">Connect</a>
+                </div>
                 <div class="head">
                     {% if type == "Private" and pvtRoom.type == "INDIV" %}
                     <h2>
                         {% if request.user.username == pvtRoom.users.all.first.username %}
-                            {{pvtRoom.users.all.last.username}}
+                        {{pvtRoom.users.all.last.username}}
                         {% else %}
-                            {{pvtRoom.users.all.first.username}}
+                        {{pvtRoom.users.all.first.username}}
                         {% endif %}
                     </h2>
                     {% else %}
                     <h2>{{roomname}}</h2>
                     {% endif %}
                     <div class="row" style="margin-bottom:10px; width:100%;">
-                    {% if type == "Private" and pvtRoom.type == "GROUP" %}
-                    <div class="col"><h6 style="margin-bottom: 15px; display:inline;">Group host : {{pvtRoom.admin}}</h6></div>
-                    <div class="col" style="display:flex; justify-content:flex-end;"><a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal2"><span class="adderspan badge rounded-pill bg-dark" style="width:110px;font-weight: 500;">View members</span></a></div>
-
-                    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModal2Label" aria-hidden="true">
-                        <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModal2Label">View members</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="displayer">
-                                    
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
+                        {% if type == "Private" and pvtRoom.type == "GROUP" %}
+                        <div class="col">
+                            <h6 style="margin-bottom: 15px; display:inline;">Group host : {{pvtRoom.admin}}</h6>
                         </div>
                     </div>
-                    {% endif %}
+                    <div class="row">
+                        <div class="col" style="margin-bottom:10px;display:flex; justify-content:space-between;">
+                            <a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal2"><span
+                                    class="adderspan badge rounded-pill bg-dark"
+                                    style="width:110px;font-weight: 500;">View members</span></a>
+                            {% if request.user == pvtRoom.admin %}
+                            <a href="terminate/{{roomname}}" class="addera"><span
+                                    class="adderspan badge rounded-pill bg-dark"
+                                    style="width: 115px;height: 22px;width:110px;font-weight: 500;">Terminate
+                                    group</span></a>
+                            {% endif %}
+                        </div>
+                        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModal2Label"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModal2Label">View members</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="displayer">
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     <button onclick="resetter()">&#8635;</button>
                 </div>
@@ -95,86 +112,93 @@
                         <span class="textarea inputbox" id="inputbox" role="textbox" onkeyup="checkKey(event)"
                             contenteditable>Enter your message...</span>
                         <hr class="invis">
-                        <button id="sub" type="submit"><img src="/static/send/send.png" alt="Send" style="height:20px;width:20px"></button>
+                        <button id="sub" type="submit"><img src="/static/send/send.png" alt="Send"
+                                style="height:20px;width:20px"></button>
                     </form>
                     {% if type == "Private" and pvtRoom.type == "GROUP" %}
-                        <a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal"><span
-                                class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
-                                Add members
-                                </span></a>
-                        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                            aria-hidden="true">
-                            <form id="user_adder">
-                                {% csrf_token %}
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Add Users</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-3" style="display:flex;align-items:center;">
-                                                    <h6 style="display:inline;">Search users : </h6>
-                                                </div>
-                                                <div class="col">
-                                                    <div id="autocomplete" class="autocomplete" style="display:inline;">
-                                                        <input class="autocomplete-input" />
-                                                        <ul class="autocomplete-result-list"></ul>
-                                                    </div>
+                    <a type="button" class="addera" data-bs-toggle="modal" data-bs-target="#exampleModal"><span
+                            class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
+                            Add members
+                        </span></a>
+                    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal"
+                        tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <form id="user_adder">
+                            {% csrf_token %}
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Users</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-3" style="display:flex;align-items:center;">
+                                                <h6 style="display:inline;">Search users : </h6>
+                                            </div>
+                                            <div class="col">
+                                                <div id="autocomplete" class="autocomplete" style="display:inline;">
+                                                    <input class="autocomplete-input" />
+                                                    <ul class="autocomplete-result-list"></ul>
                                                 </div>
                                             </div>
-
-                                            <ul class="list-group" id="user-list" style="margin-top:14px;">
-                                            </ul>
-
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" id="closeModal" class="btn btn-secondary"
-                                                data-bs-dismiss="modal" onclick="clear1()">Close</button>
-                                            <button type="submit" id="add_member" class="btn btn-primary">Add users</button>
-                                        </div>
+
+                                        <ul class="list-group" id="user-list" style="margin-top:14px;">
+                                        </ul>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="closeModal" class="btn btn-secondary"
+                                            data-bs-dismiss="modal" onclick="clear1()">Close</button>
+                                        <button type="submit" id="add_member" class="btn btn-primary">Add users</button>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                        
-                        {% if request.user == pvtRoom.admin %}
-                        <a type="button" class="removera" data-bs-toggle="modal" data-bs-target="#exampleModal3">
-                            <span class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
-                                Remove members
-                            </span></a>
-                        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal3Label"
-                            aria-hidden="true">
-                            <form id="user_remover">
-                                {% csrf_token %}
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModal3Label">Remove Users</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="listt" id="display-to-be-removed">
+                            </div>
+                        </form>
+                    </div>
 
-                                            </div>
-                                            <ul class="list-group" id="remove-user-list" style="margin-top:14px;">
-                                                
-                                            </ul>
+                    {% if request.user == pvtRoom.admin %}
+                    <a type="button" class="removera" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                        <span class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
+                            Remove members
+                        </span></a>
+                    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal3"
+                        tabindex="-1" aria-labelledby="exampleModal3Label" aria-hidden="true">
+                        <form id="user_remover">
+                            {% csrf_token %}
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModal3Label">Remove Users</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="listt" id="display-to-be-removed">
+
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" id="closeModal3" class="btn btn-secondary"
-                                                data-bs-dismiss="modal" onclick="clear1()">Close</button>
-                                            <button type="submit" id="remove_member" class="btn btn-primary">Remove users</button>
-                                        </div>
+                                        <ul class="list-group" id="remove-user-list" style="margin-top:14px;">
+
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="closeModal3" class="btn btn-secondary"
+                                            data-bs-dismiss="modal" onclick="clear1()">Close</button>
+                                        <button type="submit" id="remove_member" class="btn btn-primary">Remove
+                                            users</button>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                        {% endif %}
-                        {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <a href="leavegroup/{{roomname}}" class="leavea">
+                        <span class="adderspan badge rounded-pill bg-dark" style="width:fit-content;font-weight: 500;">
+                            Leave room
+                        </span>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="right">
@@ -221,10 +245,10 @@
             const url = `/search/?query=${input}`
             return new Promise(resolve => {
                 fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    resolve(data.data)
-                })
+                    .then(response => response.json())
+                    .then(data => {
+                        resolve(data.data)
+                    })
             })
         },
         onSubmit: result => {
@@ -237,11 +261,11 @@
             `)
         }
     })
-    
+
 
     $(document).on('submit', '#user_adder', function (e) {
         let z = []
-        for(let i = 0;i<$('#user-list').children().length;i++){
+        for (let i = 0; i < $('#user-list').children().length; i++) {
             z.push($('#user-list').children()[i].textContent.trim())
         }
         e.preventDefault();
@@ -260,12 +284,12 @@
                 $('.displayer').empty()
                 members = data.split(',')
                 members.sort()
-                for(let i = 1;i<members.length;i++){
-                    if(members[i]==admin){
+                for (let i = 1; i < members.length; i++) {
+                    if (members[i] == admin) {
                         $('.displayer').append(`<b><span>${members[i]}</span></b>`)
                         continue;
                     }
-                    else if(members[i]==user){
+                    else if (members[i] == user) {
                         $('.displayer').append(`<span><u>${members[i]}</u></span>`)
                         continue;
                     }
@@ -275,10 +299,10 @@
             }
         });
     });
-    
+
     $(document).on('submit', '#user_remover', function (e) {
         let z = []
-        for(let i = 0;i<$('#remove-user-list').children().length;i++){
+        for (let i = 0; i < $('#remove-user-list').children().length; i++) {
             z.push($('#remove-user-list').children()[i].textContent.trim())
         }
         e.preventDefault();
@@ -297,12 +321,12 @@
                 $('.displayer').empty()
                 members = data.split(',')
                 members.sort()
-                for(let i = 1;i<members.length;i++){
-                    if(members[i]==admin){
+                for (let i = 1; i < members.length; i++) {
+                    if (members[i] == admin) {
                         $('.displayer').append(`<b><span>${members[i]}</span></b>`)
                         continue;
                     }
-                    else if(members[i]==user){
+                    else if (members[i] == user) {
                         $('.displayer').append(`<span><u>${members[i]}</u></span>`)
                         continue;
                     }
@@ -317,12 +341,12 @@
     members = "{{pvtUsers}}"
     members = members.split(',')
     members.sort()
-    for(let i = 1;i<members.length;i++){
-        if(members[i]==admin){
+    for (let i = 1; i < members.length; i++) {
+        if (members[i] == admin) {
             $('.displayer').append(`<b><span>${members[i]}</span></b>`)
             continue;
         }
-        else if(members[i]==user){
+        else if (members[i] == user) {
             $('.displayer').append(`<span><u>${members[i]}</u></span>`)
             continue;
         }
