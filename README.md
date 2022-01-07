@@ -3,7 +3,7 @@
 
 ## About The Project
 
-<b>Connect 2k22</b> is basically a mini-project aiming to connect people via chat rooms on multiple scales, <i>private</i>, <i>public</i> and <i>individual</i> levels.
+<b>Connect 2k22</b> is basically a mini-project aiming to connect people via chat rooms on multiple scales, namely, <i>private</i>, <i>public</i> and <i>individual</i> levels.
 
 ### Built With
 
