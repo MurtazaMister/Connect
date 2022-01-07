@@ -21,13 +21,16 @@
     <script src="/static/room/room.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css" />
     <script>
+        let perm_count = 0
         setInterval(function () {
             $.ajax({
                 type: 'GET',
                 url: '/getMessages/{{type}}/{{roomname}}',
                 success: function (response) {
+                    let temp_count = 0
                     $('#chat').empty();
                     for (var key in response.messages) {
+                        temp_count++;
                         let temp;
                         let tym = response.messages[key].time;
                         time = tym.slice(0, 10).split('-') // This is date
@@ -39,6 +42,11 @@
                             temp = `<span class="msg text-start"> <b class="d-block mb-1">${response.messages[key].user_name}</b> ${response.messages[key].value} <span class="datetime text-end">${date} ${time[2]}-${time[1]}-${time[0]}</span> </span>`
                         }
                         $('#chat').append(temp);
+                    }
+                    if(temp_count > perm_count){
+                        perm_count = temp_count
+                        let d = $('#chat');
+                        setTimeout(() => { d.scrollTop(d.prop("scrollHeight")); }, 750)
                     }
                 }
             })
@@ -234,13 +242,11 @@
             success: function (data) {
                 {% comment %} alert(data); {% endcomment %}
                 $('#inputbox').html("Enter your message...")
-                let d = $('#chat');
-                setTimeout(() => { d.scrollTop(d.prop("scrollHeight")); }, 500)
             }
         });
     });
 
-    {% if type == "Private" %}
+    {% if type == "Private" and pvtRoom.type == "GROUP" %}
     new Autocomplete('#autocomplete', {
         search: (input) => {
             const url = `/search/?query=${input}`
