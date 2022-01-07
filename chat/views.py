@@ -24,7 +24,7 @@ def validate(request):
             login(request,user)
             return redirect('/')
         else:
-            messages.error(request, 'INVALID CREDENTIALS!')
+            messages.error(request, username+" "+password)
             return redirect('/login')
     return redirect('/')
 
