@@ -32,7 +32,7 @@ SECRET_KEY = 'cf4_@$8@*==-tv0^j%ue269k#)cv)*d6s%1j-lvsa6jz2y2s5m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['connect-2k22.herokuapp.com']
+ALLOWED_HOSTS = ['https://connect-2k22.herokuapp.com']
 
 
 # Application definition
