@@ -1,6 +1,7 @@
 secretkey.txt
 db.sqlite3
 bugs.txt
+.env
 
 # Django #
 *.log
