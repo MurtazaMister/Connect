@@ -1,4 +1,5 @@
 bugs.txt
+.env
 
 # Django #
 *.log
