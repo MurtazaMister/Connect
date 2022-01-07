@@ -1,5 +1,4 @@
 secretkey.txt
-db.sqlite3
 bugs.txt
 
 # Django #
@@ -7,7 +6,6 @@ bugs.txt
 *.pot
 *.pyc
 __pycache__
-db.sqlite3
 media
 
 # Backup files # 
